@@ -1,5 +1,6 @@
 "use client";
 import { Button, Form, Input } from "antd";
+import Link from "next/link";
 import React from "react";
 
 function ResetPasswordPage() {
@@ -24,19 +25,34 @@ function ResetPasswordPage() {
         <hr />
 
         <Form.Item
-          label="Email"
-          name="email"
+          label="New Password"
+          name="password"
           rules={[
-            { required: true, message: "Please input your email!" },
-            { type: "email", message: "Please enter a valid email!" },
+            { required: true, message: "Please input your new password!" },
           ]}
         >
-          <Input placeholder="Enter your Email to get reset link" />
+          <Input type="password" placeholder="Enter your new password" />
+        </Form.Item>
+
+        <Form.Item
+          label="Confirm Password"
+          name="confirmPassword"
+          rules={[
+            { required: true, message: "Please confirm your password!" },
+          ]}
+        >
+          <Input type="password" placeholder="Confirm your password" />
         </Form.Item>
 
         <Button type="primary" htmlType="submit" className="mt-2">
-          Send Reset Link
+          Reset Password
         </Button>
+
+        <div className="flex justify-end">
+          <Link href="/auth/sign-in" className="text-blue-500">
+            Back to Sign In
+          </Link>
+        </div>
       </Form>
     </div>
   );

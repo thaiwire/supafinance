@@ -1,19 +1,37 @@
 "use client";
 
 import React from "react";
-import { Button, Form, Input } from "antd";
+import { Button, Form, Input, message } from "antd";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { createClient } from "@/config/supabase-browser-config";
 
 function SignInPage() {
+  const [loading, setLoading] = React.useState(false);
+  const router = useRouter();
 
   const onSubmit = async (values: any) => {
     try {
-      console.log("Form Values:", values);
-    } catch (error) {
-      console.error("Error during sign in:", error);
+      setLoading(true);
+      const { email, password } = values;
+      const supabaseBrowserConfig = createClient();
+      const { data, error } = await supabaseBrowserConfig.auth.signInWithPassword({
+        email,
+        password,
+      });
+      if (error) {
+        throw new Error(error.message);
+      } else {
+        message.success("Sign in successful!");
+        console.log("Sign in successful:", data);
+        router.push("/");
+      }
+    } catch (error: any) {
+      message.error(error.message);
+    } finally {
+      setLoading(false);
     }
   };
-
 
   return (
     <div className="flex items-center justify-center auth-parent h-screen">
@@ -32,7 +50,6 @@ function SignInPage() {
           </div>
         </div>
         <hr />
-        
 
         <Form.Item
           label="Email"
@@ -53,15 +70,19 @@ function SignInPage() {
           <Input.Password placeholder="Password" />
         </Form.Item>
 
-        <Button type="primary" htmlType="submit" className="mt-2">
+        <Button
+          type="primary"
+          htmlType="submit"
+          className="mt-2"
+          loading={loading}
+        >
           Log in
         </Button>
-         <div className="flex justify-end">
+        <div className="flex justify-end">
           <Link href="/auth/forgot-password" className="text-blue-500 text-sm">
             Forgot Password?
           </Link>
-          </div>    
-
+        </div>
       </Form>
     </div>
   );
