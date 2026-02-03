@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import AntDesignTheme from "@/theme";
+import LayoutProvider from "@/layout-provider";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -29,7 +30,9 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <AntDesignTheme>{children}</AntDesignTheme>
+        <AntDesignTheme>
+          <LayoutProvider>{children}</LayoutProvider>
+        </AntDesignTheme>
       </body>
     </html>
   );

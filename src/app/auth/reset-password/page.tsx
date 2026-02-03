@@ -1,14 +1,41 @@
 "use client";
-import { Button, Form, Input } from "antd";
+import { resetuserPassword } from "@/actions/users";
+import { Button, Form, Input, message } from "antd";
 import Link from "next/link";
-import React from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import React, { use } from "react";
 
 function ResetPasswordPage() {
+   const [loading, setLoading] = React.useState(false);
+   const [form] = Form.useForm();
+   const searchParams = useSearchParams();  
+   const router = useRouter();
+
+   const code = searchParams.get("code"); 
+  
   const onSubmit = async (values: any) => {
     try {
-      console.log("Form Values:", values);
+      setLoading(true);
+      if (values.password !== values.confirmPassword) {
+        message.error("Passwords do not match");
+        return;
+      } 
+
+
+      const response = await resetuserPassword(code!, values.password);
+      if (response.Success) {
+         message.success(response.message);
+         form.resetFields();
+          router.push("/");
+      } else {
+          message.error(response.message);
+      }
+
+      console.log("Resetting password with values:", values);
     } catch (error) {
       console.error("Error during sign in:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -18,6 +45,7 @@ function ResetPasswordPage() {
         className="bg-white p-5 flex flex-col gap-2 w-[400px]"
         layout="vertical"
         onFinish={onSubmit}
+        form={form}
       >
         <div>
           <h1 className="text-xl font-bold uppercase">Reset Password</h1>
@@ -44,7 +72,8 @@ function ResetPasswordPage() {
           <Input type="password" placeholder="Confirm your password" />
         </Form.Item>
 
-        <Button type="primary" htmlType="submit" className="mt-2">
+        <Button type="primary" htmlType="submit" className="mt-2"
+          loading={loading}>
           Reset Password
         </Button>
 
